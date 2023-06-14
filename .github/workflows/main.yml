@@ -1,64 +1,39 @@
-name: previsao
-
+name: previsando
+# Controls when the action will run.
 on:
   schedule:
-    - cron: "0 14 * * *"
-    
-jobs:
-  generate-data:
-    runs-on: ${{ matrix.config.os }}
-
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {os: ubuntu-latest,   r: 'release'}
-
-    env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
+    - cron:  '0 13 * * *'
+jobs: 
+  autoscrape:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+    # Load repo and install R
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: r-lib/actions/setup-r@master
-        with:
-          r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
-
-      - uses: r-lib/actions/setup-pandoc@master
-
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          install.packages('sessioninfo')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      - name: Cache R packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      - name: Install dependencies
-        run: |
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
-      - name: Generate data
-        run: |
-          source("R/codigo.R")
-        shell: Rscript {0}
-      - name: Commit files
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add --all
-          git commit -am "add data"
-          git push
-          
+    - uses: actions/checkout@master
+    - uses: r-lib/actions/setup-r@master
+    # Set-up R
+    - name: Install packages
+      run: |
+        R -e 'install.packages("dplyr")'
+        R -e 'install.packages("fpp3")'
+        R -e 'install.packages("forecast")'
+        R -e 'install.packages("ggplot2")'
+        R -e 'install.packages("rvest")'
+        R -e 'install.packages("lubridate")'
+        R -e 'install.packages("readxl")'
+        R -e 'install.packages("writexl")'
+    # Run R script
+    - name: Scrape
+      run: Rscript R/codigo.R
+      
+ # Add new files in data folder, commit along with other modified files, push
+    - name: Commit files
+      run: |
+        git config --local user.name actions-user
+        git config --local user.email "actions@github.com"
+        git add data/*
+        git commit -am "GH ACTION Headlines $(date)"
+        git push origin main
+      env:
+        REPO_KEY: ${{secrets.GITHUB_TOKEN}}
+        username: github-actions          
