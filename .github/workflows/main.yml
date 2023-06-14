@@ -2,7 +2,7 @@ name: previsando
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '0 15 * * *'
+    - cron:  '30 16 * * *'
 jobs: 
   autoscrape:
     # The type of runner that the job will run on
@@ -10,7 +10,7 @@ jobs:
     # Load repo and install R
     steps:
     - uses: actions/checkout@master
-    - uses: r-lib/actions/setup-r@v2master
+    - uses: r-lib/actions/setup-r@master
     # Set-up R
     - name: Install packages
       run: |
