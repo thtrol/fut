@@ -1,5 +1,4 @@
 
-prebata<-function(){
 
   library(dplyr)
 library(fpp3)
@@ -52,6 +51,5 @@ if (file.exists(cam)){
 
 write_xlsx(previsoes,cam)
 
-return(previsoes)
-}
+
 
