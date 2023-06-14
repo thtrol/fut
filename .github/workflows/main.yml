@@ -2,7 +2,7 @@ name: previsando
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '0 16 * * *'
+    - cron:  '0 17 * * *'
 jobs:
   import-data:
     runs-on: ubuntu-latest
