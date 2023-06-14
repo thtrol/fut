@@ -1,4 +1,7 @@
-library(dplyr)
+
+prebata<-function(){
+
+  library(dplyr)
 library(fpp3)
 library(forecast)
 library(ggplot2)
@@ -39,13 +42,16 @@ fit <-  arima(dados$Preço,
 
 previsao<-forecast(fit, h = 1)$mean
 hoje<-dados[503,1]+1
-atual<-data.frame(DATA=hoje,Previsto=previsao)
+previsoes<-data.frame(DATA=hoje,Previsto=previsao)
 cam<-paste(getwd(),"/previsoes.xlsx",sep = "")
 
 if (file.exists(cam)){
   teste<-read_excel(cam)
-  atual<-bind_rows(atual,teste)
+  previsoes<-bind_rows(atual,teste)
 }
 
-write_xlsx(atual,cam)
+write_xlsx(previsoes,cam)
+
+return(previsoes)
+}
 
