@@ -1,8 +1,8 @@
 name: previsando
 # Controls when the action will run.
 on:
-  schedule:
-    - cron:  '0 14 * * *'
+  push:
+    branches: main
 jobs: 
   autoscrape:
     # The type of runner that the job will run on
