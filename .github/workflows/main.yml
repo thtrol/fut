@@ -2,7 +2,7 @@ name: previsando
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '0 13 * * *'
+    - cron:  '0 15 * * *'
 jobs:
   import-data:
     runs-on: ubuntu-latest
@@ -26,9 +26,7 @@ jobs:
         
     # Run R script
       - name: Generate data
-        run: |
-          source("R/codigo.R")
-        shell: Rscript {0}
+        run: Rscriot -e 'source("R/codigo.R")'
       
  # Add new files in data folder, commit along with other modified files, push
       - name: Commit files
